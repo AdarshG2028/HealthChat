@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: health
+          POSTGRES_PASSWORD: health
+          POSTGRES_DB: health
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U health" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      # Mock providers only. CI never holds API keys and never calls paid APIs.
+      LLM_PROVIDER: mock
+      JEV_PROVIDER: mock
+      OTEL_ENABLED: "false"
+      DATABASE_URL: postgresql+asyncpg://health:health@localhost:5432/health
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - name: Lint
+        run: uv run ruff check app tests && uv run ruff format --check app tests
+      - name: Type check
+        run: uv run mypy app
+      - name: Migrations apply cleanly on Postgres and match the models
+        run: |
+          uv run alembic upgrade head
+          uv run alembic check
+          uv run alembic downgrade base
+      - name: Tests on SQLite (mock providers, network blocked, live tests excluded)
+        run: uv run pytest -q
+      - name: Tests on Postgres (asyncpg, JSONB, row locks)
+        run: uv run pytest -q
+        env:
+          TEST_DATABASE_URL: postgresql+asyncpg://health:health@localhost:5432/health
+      - name: API contract is up to date (openapi.json matches the code)
+        run: |
+          PYTHONPATH=. uv run python scripts/export_openapi.py
+          git diff --exit-code openapi.json
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - uses: astral-sh/setup-uv@v6
+      - run: pnpm install --frozen-lockfile
+      - name: Generated API types match backend/openapi.json
+        run: pnpm gen:api && git diff --exit-code src/lib/api/schema.d.ts
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm build
+      - name: End-to-end + accessibility (real backend, MOCK providers, zero API calls)
+        run: |
+          (cd ../backend && uv sync --locked)
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e

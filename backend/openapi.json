@@ -1,0 +1,1839 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Healthcare Navigation Assistant API",
+    "description": "LLM gathers information, Jev decides the pathway, the backend executes it.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/healthz": {
+      "get": {
+        "tags": [
+          "meta"
+        ],
+        "summary": "Healthz",
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Healthz Healthz Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversation/start": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Start Conversation",
+        "operationId": "start_conversation_api_conversation_start_post",
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationView"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/message": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Send Message",
+        "operationId": "send_message_api_conversation__conversation_id__message_post",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          },
+          {
+            "name": "idempotency-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TurnResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Get Conversation",
+        "operationId": "get_conversation_api_conversation__conversation_id__get",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationView"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/state": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Get State",
+        "operationId": "get_state_api_conversation__conversation_id__state_get",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PatientState"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Correct State",
+        "operationId": "correct_state_api_conversation__conversation_id__state_patch",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatientStateUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationView"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/decision/retry": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Retry Decision",
+        "operationId": "retry_decision_api_conversation__conversation_id__decision_retry_post",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TurnResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/decisions": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Get Decisions",
+        "operationId": "get_decisions_api_conversation__conversation_id__decisions_get",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DecisionOut"
+                  },
+                  "title": "Response Get Decisions Api Conversation  Conversation Id  Decisions Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/trace": {
+      "get": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Get Trace",
+        "description": "Built entirely from stored events and decisions. Never calls Jev or the LLM.",
+        "operationId": "get_trace_api_conversation__conversation_id__trace_get",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionTrace"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/conversation/{conversation_id}/reset": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "summary": "Reset Conversation",
+        "description": "Start a fresh conversation. The old one is kept intact for its audit trail.",
+        "operationId": "reset_conversation_api_conversation__conversation_id__reset_post",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Conversation Id"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationView"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiCallCounts": {
+        "properties": {
+          "llm": {
+            "type": "integer",
+            "title": "Llm"
+          },
+          "jev": {
+            "type": "integer",
+            "title": "Jev"
+          }
+        },
+        "type": "object",
+        "required": [
+          "llm",
+          "jev"
+        ],
+        "title": "ApiCallCounts"
+      },
+      "Complexity": {
+        "type": "string",
+        "enum": [
+          "SIMPLE",
+          "MODERATE",
+          "COMPLEX"
+        ],
+        "title": "Complexity"
+      },
+      "ConversationView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkflowState"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/MessageOut"
+            },
+            "type": "array",
+            "title": "Messages"
+          },
+          "patient_state": {
+            "$ref": "#/components/schemas/PatientState"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "emergency": {
+            "type": "boolean",
+            "title": "Emergency",
+            "description": "True as soon as any red flag is detected; independent of Jev/LLM."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "messages",
+          "patient_state",
+          "progress",
+          "recommendation",
+          "emergency",
+          "created_at"
+        ],
+        "title": "ConversationView"
+      },
+      "DecisionOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "action": {
+            "$ref": "#/components/schemas/WorkflowAction"
+          },
+          "department": {
+            "$ref": "#/components/schemas/Department"
+          },
+          "urgency": {
+            "$ref": "#/components/schemas/Urgency"
+          },
+          "complexity": {
+            "$ref": "#/components/schemas/Complexity"
+          },
+          "missing_info": {
+            "$ref": "#/components/schemas/MissingInfo"
+          },
+          "action_confidence": {
+            "type": "number",
+            "title": "Action Confidence"
+          },
+          "department_confidence": {
+            "type": "number",
+            "title": "Department Confidence"
+          },
+          "human_review_probability": {
+            "type": "number",
+            "title": "Human Review Probability"
+          },
+          "final_action": {
+            "$ref": "#/components/schemas/WorkflowAction"
+          },
+          "final_department": {
+            "$ref": "#/components/schemas/Department"
+          },
+          "final_urgency": {
+            "$ref": "#/components/schemas/Urgency"
+          },
+          "final_complexity": {
+            "$ref": "#/components/schemas/Complexity"
+          },
+          "human_review_recommended": {
+            "type": "boolean",
+            "title": "Human Review Recommended"
+          },
+          "emergency": {
+            "type": "boolean",
+            "title": "Emergency"
+          },
+          "policy_overrides": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Policy Overrides"
+          },
+          "probabilities": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "number"
+              },
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Probabilities"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "model_version": {
+            "type": "string",
+            "title": "Model Version"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "latency_ms": {
+            "type": "integer",
+            "title": "Latency Ms"
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Tokens"
+          },
+          "jev_request": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Jev Request"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "action",
+          "department",
+          "urgency",
+          "complexity",
+          "missing_info",
+          "action_confidence",
+          "department_confidence",
+          "human_review_probability",
+          "final_action",
+          "final_department",
+          "final_urgency",
+          "final_complexity",
+          "human_review_recommended",
+          "emergency",
+          "policy_overrides",
+          "probabilities",
+          "provider",
+          "model_version",
+          "request_id",
+          "latency_ms",
+          "input_tokens",
+          "jev_request",
+          "created_at"
+        ],
+        "title": "DecisionOut",
+        "description": "Developer view of a stored Jev decision (includes probabilities)."
+      },
+      "DecisionTrace": {
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Conversation Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkflowState"
+          },
+          "llm_provider": {
+            "type": "string",
+            "title": "Llm Provider"
+          },
+          "jev_provider": {
+            "type": "string",
+            "title": "Jev Provider"
+          },
+          "turn_count": {
+            "type": "integer",
+            "title": "Turn Count"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "workflow_path": {
+            "items": {
+              "$ref": "#/components/schemas/WorkflowState"
+            },
+            "type": "array",
+            "title": "Workflow Path"
+          },
+          "red_flags": {
+            "items": {
+              "$ref": "#/components/schemas/RedFlag"
+            },
+            "type": "array",
+            "title": "Red Flags"
+          },
+          "information_available": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Information Available"
+          },
+          "api_calls": {
+            "$ref": "#/components/schemas/ApiCallCounts"
+          },
+          "decisions": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionOut"
+            },
+            "type": "array",
+            "title": "Decisions"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/TraceEvent"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversation_id",
+          "status",
+          "llm_provider",
+          "jev_provider",
+          "turn_count",
+          "created_at",
+          "workflow_path",
+          "red_flags",
+          "information_available",
+          "api_calls",
+          "decisions",
+          "events"
+        ],
+        "title": "DecisionTrace",
+        "description": "Everything the developer Decision Trace shows. Built from stored data: zero model calls."
+      },
+      "Department": {
+        "type": "string",
+        "enum": [
+          "GENERAL_MEDICINE",
+          "CARDIOLOGY",
+          "NEUROLOGY",
+          "PULMONOLOGY",
+          "GASTROENTEROLOGY",
+          "ORTHOPEDICS",
+          "DERMATOLOGY",
+          "ENT",
+          "GYNECOLOGY",
+          "UROLOGY",
+          "EMERGENCY",
+          "OTHER"
+        ],
+        "title": "Department"
+      },
+      "ErrorBody": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "retryable": {
+            "type": "boolean",
+            "title": "Retryable",
+            "default": false
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "retry_after_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retry After Seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ErrorBody"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "title": "ErrorResponse"
+      },
+      "MessageOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "role": {
+            "$ref": "#/components/schemas/MessageRole"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "role",
+          "content",
+          "created_at"
+        ],
+        "title": "MessageOut"
+      },
+      "MessageRole": {
+        "type": "string",
+        "enum": [
+          "user",
+          "assistant"
+        ],
+        "title": "MessageRole"
+      },
+      "MissingInfo": {
+        "type": "string",
+        "enum": [
+          "DURATION",
+          "SEVERITY",
+          "ONSET",
+          "ASSOCIATED_SYMPTOMS",
+          "MEDICAL_HISTORY",
+          "MEDICATIONS",
+          "AGE_OR_SEX",
+          "NONE"
+        ],
+        "title": "MissingInfo",
+        "description": "What Jev thinks is missing when it answers ASK_MORE_INFORMATION."
+      },
+      "PatientState": {
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 120.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "female",
+                  "male",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "symptom_onset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Onset"
+          },
+          "symptom_duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Duration"
+          },
+          "symptom_severity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Severity"
+          },
+          "symptom_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Frequency"
+          },
+          "primary_symptoms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Primary Symptoms"
+          },
+          "associated_symptoms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Associated Symptoms"
+          },
+          "existing_conditions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Existing Conditions"
+          },
+          "current_medications": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Current Medications"
+          },
+          "known_allergies": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Known Allergies"
+          },
+          "relevant_medical_history": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Relevant Medical History"
+          },
+          "additional_information": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Additional Information"
+          },
+          "red_flags": {
+            "items": {
+              "$ref": "#/components/schemas/RedFlag"
+            },
+            "type": "array",
+            "title": "Red Flags"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PatientState"
+      },
+      "PatientStateUpdate": {
+        "properties": {
+          "age": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 120.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Age"
+          },
+          "sex": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "female",
+                  "male",
+                  "other"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sex"
+          },
+          "symptom_onset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Onset"
+          },
+          "symptom_duration": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Duration"
+          },
+          "symptom_severity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Severity"
+          },
+          "symptom_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symptom Frequency"
+          },
+          "primary_symptoms": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primary Symptoms"
+          },
+          "associated_symptoms": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Associated Symptoms"
+          },
+          "existing_conditions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Existing Conditions"
+          },
+          "current_medications": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Medications"
+          },
+          "known_allergies": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Known Allergies"
+          },
+          "relevant_medical_history": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relevant Medical History"
+          },
+          "additional_information": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Additional Information"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "PatientStateUpdate",
+        "description": "A partial update. `None` means \"no new information\", never \"erase\"."
+      },
+      "Progress": {
+        "properties": {
+          "turn": {
+            "type": "integer",
+            "title": "Turn"
+          },
+          "max_turns": {
+            "type": "integer",
+            "title": "Max Turns"
+          },
+          "collected_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Collected Fields"
+          },
+          "core_complete": {
+            "type": "boolean",
+            "title": "Core Complete"
+          }
+        },
+        "type": "object",
+        "required": [
+          "turn",
+          "max_turns",
+          "collected_fields",
+          "core_complete"
+        ],
+        "title": "Progress"
+      },
+      "Recommendation": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/WorkflowAction"
+          },
+          "department": {
+            "$ref": "#/components/schemas/Department"
+          },
+          "department_label": {
+            "type": "string",
+            "title": "Department Label"
+          },
+          "urgency": {
+            "$ref": "#/components/schemas/Urgency"
+          },
+          "complexity": {
+            "$ref": "#/components/schemas/Complexity"
+          },
+          "next_step": {
+            "type": "string",
+            "title": "Next Step"
+          },
+          "human_review_recommended": {
+            "type": "boolean",
+            "title": "Human Review Recommended"
+          },
+          "emergency": {
+            "type": "boolean",
+            "title": "Emergency"
+          },
+          "crisis_support": {
+            "type": "boolean",
+            "title": "Crisis Support"
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Decided At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "department",
+          "department_label",
+          "urgency",
+          "complexity",
+          "next_step",
+          "human_review_recommended",
+          "emergency",
+          "crisis_support",
+          "decided_at"
+        ],
+        "title": "Recommendation"
+      },
+      "RedFlag": {
+        "type": "string",
+        "enum": [
+          "CHEST_PAIN_CARDIAC",
+          "STROKE_SIGNS",
+          "BREATHING_DIFFICULTY",
+          "SUICIDAL_IDEATION",
+          "ANAPHYLAXIS",
+          "SEVERE_BLEEDING",
+          "LOSS_OF_CONSCIOUSNESS",
+          "SEIZURE"
+        ],
+        "title": "RedFlag",
+        "description": "Emergency warning signs. Shared by the LLM schema and the deterministic rules."
+      },
+      "SendMessageRequest": {
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Content"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "SendMessageRequest"
+      },
+      "TraceEvent": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "type": {
+            "$ref": "#/components/schemas/WorkflowEventType"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "data",
+          "request_id",
+          "created_at"
+        ],
+        "title": "TraceEvent"
+      },
+      "TurnResponse": {
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Conversation Id"
+          },
+          "status": {
+            "$ref": "#/components/schemas/WorkflowState"
+          },
+          "message": {
+            "$ref": "#/components/schemas/MessageOut"
+          },
+          "patient_state": {
+            "$ref": "#/components/schemas/PatientState"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/Progress"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Recommendation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "emergency": {
+            "type": "boolean",
+            "title": "Emergency"
+          },
+          "replayed": {
+            "type": "boolean",
+            "title": "Replayed",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "conversation_id",
+          "status",
+          "message",
+          "patient_state",
+          "progress",
+          "recommendation",
+          "emergency"
+        ],
+        "title": "TurnResponse"
+      },
+      "Urgency": {
+        "type": "string",
+        "enum": [
+          "ROUTINE",
+          "URGENT",
+          "EMERGENCY"
+        ],
+        "title": "Urgency"
+      },
+      "WorkflowAction": {
+        "type": "string",
+        "enum": [
+          "ASK_MORE_INFORMATION",
+          "PROVIDE_GENERAL_GUIDANCE",
+          "REFER_TO_DOCTOR",
+          "ROUTE_TO_DEPARTMENT",
+          "ESCALATE_TO_HUMAN",
+          "END"
+        ],
+        "title": "WorkflowAction"
+      },
+      "WorkflowEventType": {
+        "type": "string",
+        "enum": [
+          "CONVERSATION_STARTED",
+          "MESSAGE_RECEIVED",
+          "LLM_EXTRACTION",
+          "LLM_FAILED",
+          "PATIENT_STATE_UPDATED",
+          "PATIENT_STATE_CORRECTED",
+          "RED_FLAG_DETECTED",
+          "TURN_CAP_REACHED",
+          "INFORMATION_COLLECTION_CONTINUED",
+          "WORKFLOW_STATE_CHANGED",
+          "READY_FOR_JEV",
+          "JEV_DECISION_COMPLETED",
+          "JEV_FAILED",
+          "POLICY_OVERRIDE",
+          "ACTION_EXECUTED",
+          "HUMAN_REVIEW_REQUIRED",
+          "LLM_RESPONSE_GENERATED",
+          "EXPLANATION_FALLBACK_USED",
+          "CONVERSATION_COMPLETED"
+        ],
+        "title": "WorkflowEventType"
+      },
+      "WorkflowState": {
+        "type": "string",
+        "enum": [
+          "COLLECTING_INFORMATION",
+          "READY_FOR_DECISION",
+          "JEV_PROCESSING",
+          "EXECUTING_ACTION",
+          "COMPLETED",
+          "ESCALATED",
+          "ERROR"
+        ],
+        "title": "WorkflowState"
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens: soft powder-blue brand, warm off-white surfaces, near-black pills,
+ * pastel category tones (sage, taupe, lavender), generous radii.
+ */
+@theme {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #141414;
+  --color-ink-soft: #3b3f46;
+  --color-muted: #5f6672;
+  --color-line: #e7e8ec;
+  --color-canvas: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8f8f7;
+
+  --color-brand: #5f82b8;
+  --color-brand-strong: #4b6ea6;
+  --color-brand-soft: #dde7f5;
+  --color-brand-ink: #3f5f93;
+  --color-sky: #c9d7ec;
+
+  --color-sage: #5a7f64;
+  --color-sage-soft: #e3efe6;
+  --color-taupe: #8a6d5d;
+  --color-taupe-soft: #f2ece6;
+  --color-lavender: #6552b5;
+  --color-lavender-soft: #ebe7f8;
+
+  --color-ok: #4f9d63;
+  --color-ok-ink: #336b41;
+  --color-warn: #94590c;
+  --color-warn-soft: #fbf0df;
+  --color-danger: #b83232;
+  --color-danger-soft: #fce9e9;
+
+  --radius-card: 1.75rem;
+  --radius-panel: 2.25rem;
+
+  --shadow-soft: 0 1px 2px rgb(20 20 20 / 0.04), 0 8px 24px -12px rgb(20 20 20 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(20 20 20 / 0.05), 0 20px 40px -20px rgb(50 70 110 / 0.35);
+
+  --animate-rise: rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-blink: blink 1.2s infinite ease-in-out;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes blink {
+    0%,
+    80%,
+    100% {
+      opacity: 0.25;
+      transform: translateY(0);
+    }
+    40% {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* Base styles live in the base layer so utilities (e.g. focus-visible:outline-none) can override them. */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-brand-soft);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-strong);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

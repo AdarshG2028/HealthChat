@@ -1,0 +1,47 @@
+{
+  "model": "jev-1.13.0",
+  "usage": { "input_tokens": 912, "output_tokens": 14 },
+  "answers": {
+    "action": {
+      "type": "choice",
+      "choice": "ROUTE_TO_DEPARTMENT",
+      "confidence": 0.84,
+      "probabilities": {
+        "ASK_MORE_INFORMATION": 0.05, "PROVIDE_GENERAL_GUIDANCE": 0.04, "REFER_TO_DOCTOR": 0.05,
+        "ROUTE_TO_DEPARTMENT": 0.84, "ESCALATE_TO_HUMAN": 0.01, "END": 0.01
+      }
+    },
+    "department": {
+      "type": "choice",
+      "choice": "GASTROENTEROLOGY",
+      "confidence": 0.9,
+      "probabilities": {
+        "GENERAL_MEDICINE": 0.06, "CARDIOLOGY": 0.0, "NEUROLOGY": 0.0, "PULMONOLOGY": 0.0,
+        "GASTROENTEROLOGY": 0.9, "ORTHOPEDICS": 0.0, "DERMATOLOGY": 0.0, "ENT": 0.0,
+        "GYNECOLOGY": 0.02, "UROLOGY": 0.01, "EMERGENCY": 0.01, "OTHER": 0.0
+      }
+    },
+    "urgency": {
+      "type": "choice",
+      "choice": "ROUTINE",
+      "confidence": 0.78,
+      "probabilities": { "ROUTINE": 0.78, "URGENT": 0.2, "EMERGENCY": 0.02 }
+    },
+    "complexity": {
+      "type": "choice",
+      "choice": "MODERATE",
+      "confidence": 0.71,
+      "probabilities": { "SIMPLE": 0.25, "MODERATE": 0.71, "COMPLEX": 0.04 }
+    },
+    "needs_human_review": { "type": "noul", "noul": 0.18 },
+    "missing_info": {
+      "type": "choice",
+      "choice": "NONE",
+      "confidence": 0.66,
+      "probabilities": {
+        "DURATION": 0.03, "SEVERITY": 0.03, "ONSET": 0.08, "ASSOCIATED_SYMPTOMS": 0.12,
+        "MEDICAL_HISTORY": 0.05, "MEDICATIONS": 0.02, "AGE_OR_SEX": 0.01, "NONE": 0.66
+      }
+    }
+  }
+}
